@@ -1,0 +1,277 @@
+<div class="app-shell">
+  <aside class="sidebar">
+    <a class="brand" href="/" aria-label="TaskBoard ana sayfa"
+      ><span class="brand-icon">▦</span>TaskBoard<span class="brand-dot"
+        >.</span
+      ></a
+    >
+    <div class="workspace">
+      <span class="avatar">B</span>
+      <div>
+        <strong>Çalışma alanım</strong><small>Takım çalışma alanı</small>
+      </div>
+    </div>
+    <p class="nav-label">ÇALIŞMA ALANI</p>
+    <nav>
+      <a href="/" class="active"
+        ><span>▦</span>Panolar<span class="nav-indicator"></span
+      ></a>
+    </nav>
+    <div class="sidebar-note">
+      <span class="status-dot"></span>Her şey yerli yerinde.<small
+        >Bir sonraki adıma odaklan.</small
+      >
+    </div>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <span
+        >Çalışma alanı <span class="crumb">/</span>
+        <strong>Panolar</strong></span
+      ><span class="avatar">HB</span>
+    </header>
+    <main>
+      <div class="page-heading">
+        <div>
+          <p class="eyebrow">FİKİRDEN TAMAMLANANA.</p>
+          <h1>Proje panosu</h1>
+          <p class="subtitle">Ekibin işlerini düzenle. Birlikte ilerle.</p>
+        </div>
+        <button class="primary" (click)="newCard()">+ Yeni görev</button>
+      </div>
+      @if (error()) {
+        <div class="alert" role="alert">
+          {{ error()
+          }}<button
+            type="button"
+            class="quiet"
+            (click)="error.set('')"
+            aria-label="Hata bildirimini kapat"
+          >
+            ×
+          </button>
+        </div>
+      }
+      @if (notice()) {
+        <div class="notice" role="status">{{ notice() }}</div>
+      }
+      <div class="metrics">
+        <div class="metric">
+          <div class="metric-top">
+            Toplam görev<span class="metric-icon">▦</span>
+          </div>
+          <strong>{{ all().length }}</strong
+          ><small>Seçili panodaki tüm kartlar</small>
+        </div>
+        <div class="metric">
+          <div class="metric-top">
+            Tamamlanan<span class="metric-icon">✓</span>
+          </div>
+          <strong>{{ done() }}</strong
+          ><small>Son sütuna ulaşan görevler</small>
+        </div>
+        <div class="metric">
+          <div class="metric-top">
+            Devam eden<span class="metric-icon">◷</span>
+          </div>
+          <strong>{{ all().length - done() }}</strong
+          ><small>Bir sonraki adımı bekleyen</small>
+        </div>
+        <div class="metric">
+          <div class="metric-top">
+            İlerleme<span class="metric-icon">↗</span>
+          </div>
+          <strong
+            >%{{
+              all().length
+                ? ((done() / all().length) * 100 | number: "1.0-0")
+                : 0
+            }}</strong
+          ><small>Adım adım, birlikte</small>
+        </div>
+      </div>
+      @if (panel() === "board") {
+        <form class="panel form-panel" (ngSubmit)="saveBoard()">
+          <div class="form-head">
+            <h2>Yeni pano</h2>
+            <button type="button" class="quiet" (click)="close()">Kapat</button>
+          </div>
+          <div class="form-grid">
+            <label
+              >Pano adı<input
+                name="name"
+                [(ngModel)]="boardName"
+                required
+                maxlength="100" /></label
+            ><label class="span2"
+              >Açıklama<input
+                name="description"
+                [(ngModel)]="boardDescription"
+                maxlength="500"
+            /></label>
+          </div>
+          <div class="form-actions">
+            <button class="primary" [disabled]="busy()">Pano oluştur</button>
+          </div>
+        </form>
+      }
+      @if (panel() === "card") {
+        <form class="panel form-panel" (ngSubmit)="saveCard()">
+          <div class="form-head">
+            <h2>{{ editing ? "Görevi düzenle" : "Yeni görev" }}</h2>
+            <button type="button" class="quiet" (click)="close()">Kapat</button>
+          </div>
+          <div class="form-grid">
+            <label class="span2"
+              >Başlık<input
+                name="title"
+                [(ngModel)]="card.title"
+                required
+                maxlength="160" /></label
+            ><label
+              >Sütun<select name="stage" [(ngModel)]="card.stageId" required>
+                @for (s of detail()?.stages || []; track s.stage.id) {
+                  <option [value]="s.stage.id">{{ s.stage.name }}</option>
+                }
+              </select></label
+            ><label
+              >Görevli<input
+                name="assignee"
+                [(ngModel)]="card.assignee"
+                maxlength="80" /></label
+            ><label
+              >Etiket<input
+                name="label"
+                [(ngModel)]="card.label"
+                maxlength="30" /></label
+            ><label
+              >Öncelik<select name="priority" [(ngModel)]="card.priority">
+                <option value="LOW">Düşük</option>
+                <option value="NORMAL">Normal</option>
+                <option value="HIGH">Yüksek</option>
+              </select></label
+            ><label
+              >Son tarih<input
+                name="due"
+                type="date"
+                [(ngModel)]="card.dueDate" /></label
+            ><label class="span2"
+              >Açıklama<textarea
+                name="description"
+                [(ngModel)]="card.description"
+                maxlength="2000"
+              ></textarea>
+            </label>
+          </div>
+          <div class="form-actions">
+            <button class="primary" [disabled]="busy()">Kaydet</button>
+            @if (editing) {
+              <button
+                type="button"
+                class="quiet danger"
+                (click)="remove()"
+                [disabled]="busy()"
+              >
+                Görevi sil
+              </button>
+            }
+          </div>
+        </form>
+      }
+      <section class="panel">
+        <div class="toolbar">
+          <select
+            aria-label="Pano seç"
+            [ngModel]="detail()?.board?.id || ''"
+            (ngModelChange)="select($event)"
+          >
+            @for (b of boards(); track b.id) {
+              <option [value]="b.id">{{ b.name }}</option>
+            }</select
+          ><button class="quiet" (click)="panel.set('board')">+ Pano</button
+          ><input
+            class="search"
+            aria-label="Görevlerde ara"
+            placeholder="Görev, kişi veya etiket ara…"
+            [ngModel]="query()"
+            (ngModelChange)="query.set($event)"
+          /><select
+            aria-label="Öncelik filtresi"
+            [ngModel]="filter()"
+            (ngModelChange)="filter.set($event)"
+          >
+            <option value="">Tüm öncelikler</option>
+            <option value="HIGH">Yüksek</option>
+            <option value="NORMAL">Normal</option>
+            <option value="LOW">Düşük</option>
+          </select>
+        </div>
+        @if (detail(); as d) {
+          <div class="kanban">
+            @for (s of d.stages; track s.stage.id) {
+              <section
+                class="column"
+                (dragover)="$event.preventDefault()"
+                (drop)="drop($event, s.stage.id)"
+              >
+                <div class="column-head">
+                  {{ s.stage.name
+                  }}<span class="counter">{{ s.cards.length }}</span>
+                </div>
+                @for (c of visible(s.cards); track c.id) {
+                  <button
+                    class="card"
+                    draggable="true"
+                    (dragstart)="dragged = c.id"
+                    (click)="edit(c)"
+                  >
+                    <span class="tag">{{ c.label || "Genel" }}</span>
+                    <h3>{{ c.title }}</h3>
+                    <p>{{ c.description }}</p>
+                    <div class="card-meta">
+                      <span>{{ c.assignee || "Atanmamış" }}</span
+                      ><span>{{
+                        c.priority === "HIGH"
+                          ? "↑
+                  Yüksek"
+                          : c.dueDate
+                            ? date(c.dueDate)
+                            : "Normal"
+                      }}</span>
+                    </div>
+                  </button>
+                }
+                <button class="add-card" (click)="newCard(s.stage.id)">
+                  + Görev ekle
+                </button>
+              </section>
+            }
+          </div>
+          <form class="toolbar" (ngSubmit)="saveStage()">
+            <input
+              name="stageName"
+              aria-label="Yeni sütun adı"
+              placeholder="Yeni sütun adı"
+              [(ngModel)]="stageName"
+              required
+              maxlength="60"
+            /><button class="secondary" [disabled]="busy()">Sütun ekle</button
+            ><span class="help"
+              >Kartları sürükleyerek veya düzenleme alanından
+              taşıyabilirsin.</span
+            >
+          </form>
+        } @else {
+          <div class="empty">
+            <strong>Bir fikre yer aç.</strong>İlk panonu oluştur ve görevlerini
+            düzenlemeye başla.
+          </div>
+        }
+      </section>
+      <footer>
+        <strong>TaskBoard.</strong
+        ><span>Detayları düzenle. Akışa odaklan.</span>
+      </footer>
+    </main>
+  </div>
+</div>
