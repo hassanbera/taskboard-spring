@@ -8,6 +8,10 @@ Fikirden tamamlanana. Ekibin için sade bir Kanban çalışma alanı.
 
 [Telefon görünümü](docs/mobile.png)
 
+## Arayüz
+
+**Spartan UI** · Taş ve kiremit tonları, koyu proje şeridi ve Kanban sütunları. Tema sınırları ve doğrulama notları: [Arayüz sistemi](docs/ui.md).
+
 ## Özellikler
 
 - Birden fazla pano ve özel sütunlar

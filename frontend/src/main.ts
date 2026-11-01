@@ -1,3 +1,7 @@
+import { HlmNativeSelect } from "@spartan-ng/helm/native-select";
+import { HlmButton } from "@spartan-ng/helm/button";
+import { HlmInput } from "@spartan-ng/helm/input";
+import { HlmCard } from "@spartan-ng/helm/card";
 import {
   Component,
   signal,
@@ -57,7 +61,14 @@ interface BoardDetail {
 @Component({
   selector: "app-root",
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    HlmButton,
+    HlmInput,
+    HlmCard,
+    HlmNativeSelect,
+  ],
   templateUrl: "./app.html",
   host: { "(document:keydown.escape)": "close()" },
 })

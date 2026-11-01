@@ -1,48 +1,29 @@
-<div class="app-shell">
-  <aside class="sidebar">
-    <a class="brand" href="/" aria-label="TaskBoard ana sayfa"
-      ><span class="brand-icon">▦</span>TaskBoard<span class="brand-dot"
-        >.</span
-      ></a
-    >
-    <div class="workspace">
-      <span class="avatar">B</span>
-      <div>
-        <strong>Çalışma alanım</strong><small>Takım çalışma alanı</small>
-      </div>
-    </div>
-    <p class="nav-label">ÇALIŞMA ALANI</p>
-    <nav>
-      <a href="/" class="active"
-        ><span>▦</span>Panolar<span class="nav-indicator"></span
-      ></a>
-    </nav>
-    <div class="sidebar-note">
-      <span class="status-dot"></span>Her şey yerli yerinde.<small
-        >Bir sonraki adıma odaklan.</small
-      >
-    </div>
+<div class="product-layout">
+  <aside class="product-rail">
+    <a class="brand-link" href="/">TaskBoard</a
+    ><a href="/" class="rail-active">Panolar</a
+    ><small>Takımın çalışma alanı</small>
   </aside>
-  <div class="main">
-    <header class="topbar">
-      <span
-        >Çalışma alanı <span class="crumb">/</span>
-        <strong>Panolar</strong></span
-      ><span class="avatar">HB</span>
+  <div class="product-content">
+    <header class="product-header">
+      <span>Panolar</span><span>Çalışma alanı</span>
     </header>
-    <main>
+    <main class="product-main">
       <div class="page-heading">
         <div>
-          <p class="eyebrow">FİKİRDEN TAMAMLANANA.</p>
           <h1>Proje panosu</h1>
           <p class="subtitle">Ekibin işlerini düzenle. Birlikte ilerle.</p>
         </div>
-        <button class="primary" (click)="newCard()">+ Yeni görev</button>
+        <button hlmBtn variant="default" class="primary" (click)="newCard()">
+          + Yeni görev
+        </button>
       </div>
       @if (error()) {
         <div class="alert" role="alert">
           {{ error()
           }}<button
+            hlmBtn
+            variant="outline"
             type="button"
             class="quiet"
             (click)="error.set('')"
@@ -56,28 +37,28 @@
         <div class="notice" role="status">{{ notice() }}</div>
       }
       <div class="metrics">
-        <div class="metric">
+        <div hlmCard size="sm" class="metric gap-0">
           <div class="metric-top">
             Toplam görev<span class="metric-icon">▦</span>
           </div>
           <strong>{{ all().length }}</strong
           ><small>Seçili panodaki tüm kartlar</small>
         </div>
-        <div class="metric">
+        <div hlmCard size="sm" class="metric gap-0">
           <div class="metric-top">
             Tamamlanan<span class="metric-icon">✓</span>
           </div>
           <strong>{{ done() }}</strong
           ><small>Son sütuna ulaşan görevler</small>
         </div>
-        <div class="metric">
+        <div hlmCard size="sm" class="metric gap-0">
           <div class="metric-top">
             Devam eden<span class="metric-icon">◷</span>
           </div>
           <strong>{{ all().length - done() }}</strong
           ><small>Bir sonraki adımı bekleyen</small>
         </div>
-        <div class="metric">
+        <div hlmCard size="sm" class="metric gap-0">
           <div class="metric-top">
             İlerleme<span class="metric-icon">↗</span>
           </div>
@@ -94,24 +75,41 @@
         <form class="panel form-panel" (ngSubmit)="saveBoard()">
           <div class="form-head">
             <h2>Yeni pano</h2>
-            <button type="button" class="quiet" (click)="close()">Kapat</button>
+            <button
+              hlmBtn
+              variant="outline"
+              type="button"
+              class="quiet"
+              (click)="close()"
+            >
+              Kapat
+            </button>
           </div>
           <div class="form-grid">
             <label
               >Pano adı<input
+                hlmInput
                 name="name"
                 [(ngModel)]="boardName"
                 required
                 maxlength="100" /></label
             ><label class="span2"
               >Açıklama<input
+                hlmInput
                 name="description"
                 [(ngModel)]="boardDescription"
                 maxlength="500"
             /></label>
           </div>
           <div class="form-actions">
-            <button class="primary" [disabled]="busy()">Pano oluştur</button>
+            <button
+              hlmBtn
+              variant="default"
+              class="primary"
+              [disabled]="busy()"
+            >
+              Pano oluştur
+            </button>
           </div>
         </form>
       }
@@ -119,44 +117,64 @@
         <form class="panel form-panel" (ngSubmit)="saveCard()">
           <div class="form-head">
             <h2>{{ editing ? "Görevi düzenle" : "Yeni görev" }}</h2>
-            <button type="button" class="quiet" (click)="close()">Kapat</button>
+            <button
+              hlmBtn
+              variant="outline"
+              type="button"
+              class="quiet"
+              (click)="close()"
+            >
+              Kapat
+            </button>
           </div>
           <div class="form-grid">
             <label class="span2"
               >Başlık<input
+                hlmInput
                 name="title"
                 [(ngModel)]="card.title"
                 required
                 maxlength="160" /></label
             ><label
-              >Sütun<select name="stage" [(ngModel)]="card.stageId" required>
+              >Sütun<hlm-native-select
+                name="stage"
+                [(ngModel)]="card.stageId"
+                required
+              >
                 @for (s of detail()?.stages || []; track s.stage.id) {
                   <option [value]="s.stage.id">{{ s.stage.name }}</option>
                 }
-              </select></label
+              </hlm-native-select></label
             ><label
               >Görevli<input
+                hlmInput
                 name="assignee"
                 [(ngModel)]="card.assignee"
                 maxlength="80" /></label
             ><label
               >Etiket<input
+                hlmInput
                 name="label"
                 [(ngModel)]="card.label"
                 maxlength="30" /></label
             ><label
-              >Öncelik<select name="priority" [(ngModel)]="card.priority">
+              >Öncelik<hlm-native-select
+                name="priority"
+                [(ngModel)]="card.priority"
+              >
                 <option value="LOW">Düşük</option>
                 <option value="NORMAL">Normal</option>
                 <option value="HIGH">Yüksek</option>
-              </select></label
+              </hlm-native-select></label
             ><label
               >Son tarih<input
+                hlmInput
                 name="due"
                 type="date"
                 [(ngModel)]="card.dueDate" /></label
             ><label class="span2"
               >Açıklama<textarea
+                hlmInput
                 name="description"
                 [(ngModel)]="card.description"
                 maxlength="2000"
@@ -164,9 +182,18 @@
             </label>
           </div>
           <div class="form-actions">
-            <button class="primary" [disabled]="busy()">Kaydet</button>
+            <button
+              hlmBtn
+              variant="default"
+              class="primary"
+              [disabled]="busy()"
+            >
+              Kaydet
+            </button>
             @if (editing) {
               <button
+                hlmBtn
+                variant="outline"
                 type="button"
                 class="quiet danger"
                 (click)="remove()"
@@ -180,22 +207,29 @@
       }
       <section class="panel">
         <div class="toolbar">
-          <select
+          <hlm-native-select
             aria-label="Pano seç"
             [ngModel]="detail()?.board?.id || ''"
             (ngModelChange)="select($event)"
           >
             @for (b of boards(); track b.id) {
               <option [value]="b.id">{{ b.name }}</option>
-            }</select
-          ><button class="quiet" (click)="panel.set('board')">+ Pano</button
+            }</hlm-native-select
+          ><button
+            hlmBtn
+            variant="outline"
+            class="quiet"
+            (click)="panel.set('board')"
+          >
+            + Pano</button
           ><input
+            hlmInput
             class="search"
             aria-label="Görevlerde ara"
             placeholder="Görev, kişi veya etiket ara…"
             [ngModel]="query()"
             (ngModelChange)="query.set($event)"
-          /><select
+          /><hlm-native-select
             aria-label="Öncelik filtresi"
             [ngModel]="filter()"
             (ngModelChange)="filter.set($event)"
@@ -204,7 +238,7 @@
             <option value="HIGH">Yüksek</option>
             <option value="NORMAL">Normal</option>
             <option value="LOW">Düşük</option>
-          </select>
+          </hlm-native-select>
         </div>
         @if (detail(); as d) {
           <div class="kanban">
@@ -241,7 +275,12 @@
                     </div>
                   </button>
                 }
-                <button class="add-card" (click)="newCard(s.stage.id)">
+                <button
+                  hlmBtn
+                  variant="outline"
+                  class="add-card"
+                  (click)="newCard(s.stage.id)"
+                >
                   + Görev ekle
                 </button>
               </section>
@@ -249,13 +288,20 @@
           </div>
           <form class="toolbar" (ngSubmit)="saveStage()">
             <input
+              hlmInput
               name="stageName"
               aria-label="Yeni sütun adı"
               placeholder="Yeni sütun adı"
               [(ngModel)]="stageName"
               required
               maxlength="60"
-            /><button class="secondary" [disabled]="busy()">Sütun ekle</button
+            /><button
+              hlmBtn
+              variant="outline"
+              class="secondary"
+              [disabled]="busy()"
+            >
+              Sütun ekle</button
             ><span class="help"
               >Kartları sürükleyerek veya düzenleme alanından
               taşıyabilirsin.</span
@@ -268,10 +314,6 @@
           </div>
         }
       </section>
-      <footer>
-        <strong>TaskBoard.</strong
-        ><span>Detayları düzenle. Akışa odaklan.</span>
-      </footer>
     </main>
   </div>
 </div>
