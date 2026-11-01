@@ -7,7 +7,15 @@
     "experimentalDecorators": true,
     "skipLibCheck": true,
     "lib": ["ES2022", "DOM"],
-    "isolatedModules": true
+    "isolatedModules": true,
+    "paths": {
+      "@spartan-ng/helm/button": ["./src/ui/button/src/index.ts"],
+      "@spartan-ng/helm/utils": ["./src/ui/utils/src/index.ts"],
+      "@spartan-ng/helm/input": ["./src/ui/input/src/index.ts"],
+      "@spartan-ng/helm/dialog": ["./src/ui/dialog/src/index.ts"],
+      "@spartan-ng/helm/card": ["./src/ui/card/src/index.ts"],
+      "@spartan-ng/helm/native-select": ["./src/ui/native-select/src/index.ts"]
+    }
   },
   "angularCompilerOptions": {
     "strictTemplates": true

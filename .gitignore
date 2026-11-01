@@ -9,3 +9,5 @@ obj/
 .vs/
 .idea/
 test-results/
+
+frontend/.nx/
